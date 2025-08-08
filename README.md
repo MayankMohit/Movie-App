@@ -1,6 +1,16 @@
-# 🎬 FAVFLIX
+<h1 style="
+  font-size: 2.5rem;
+  font-family: 'Bebas Neue', sans-serif;
+  text-transform: uppercase;
+  color: #e50914;
+  text-decoration: none;
+  letter-spacing: 2px;
+  text-shadow: 0px 2px 0.5px rgba(121, 43, 43, 1);
+">
+  🎬 FAVFLIX
+</h1>
 
-FavFlix is a React-based web application that allows users to search for movies, browse popular titles, and manage a list of their favourite movies.  
+Favflix is a React-based web application that allows users to search for movies, browse popular titles, and manage a list of their favourite movies.  
 It uses [The Movie Database (TMDB) API](https://www.themoviedb.org/) for movie data.
 
 ---
