@@ -1,6 +1,6 @@
-# 🎬 Movie Explorer
+# 🎬 FAVFLIX
 
-Movie Explorer is a React-based web application that allows users to search for movies, browse popular titles, and manage a list of their favourite movies.  
+FavFlix is a React-based web application that allows users to search for movies, browse popular titles, and manage a list of their favourite movies.  
 It uses [The Movie Database (TMDB) API](https://www.themoviedb.org/) for movie data.
 
 ---
