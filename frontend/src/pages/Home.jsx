@@ -8,8 +8,9 @@ function Home() {
   const [movies, setMovies] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1); 
-  // const refe = useRef(null);
+  const [page, setPage] = useState(1);
+
+  const bottomRef = useRef(null); // For smooth scrolling after load more
 
   useEffect(() => {
     const loadPopularMovies = async () => {
@@ -45,41 +46,45 @@ function Home() {
       setLoading(false);
     }
   };
-  const loadMoreMovies = async (e) => {
-    e.preventDefault();
-    if (loading) return; // Prevent loading more if it's already loading
+
+  const loadMoreMovies = async () => {
+    if (loading) return; // Prevent multiple clicks
 
     setLoading(true);
     const nextP = page + 1;
-    setPage((prevPage) => nextP); // Increase the page number
+    setPage(nextP); // Increase page number
 
     try {
       let moreMovies;
       if (searchQuery.length > 0) {
-        moreMovies = await searchMovies(searchQuery, nextP); // Pass the new page number
+        moreMovies = await searchMovies(searchQuery, nextP);
       } else {
         moreMovies = await getPopularMovies(nextP);
       }
+
       if (moreMovies.length > 0) {
-      const existingIds = new Set(movies.map(movie => movie.id));
-      const newMovies = moreMovies.filter(movie => !existingIds.has(movie.id));
-        setMovies((prevMovies) => [...prevMovies, ...newMovies]); // Append new movies to the state
-        } else {
-        setError("No more movies to load"); // Display error if no new movies found
+        const existingIds = new Set(movies.map((movie) => movie.id));
+        const newMovies = moreMovies.filter(
+          (movie) => !existingIds.has(movie.id)
+        );
+        setMovies((prevMovies) => [...prevMovies, ...newMovies]);
+      } else {
+        setError("No more movies to load");
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
       setError("Failed to load more movies...");
     } finally {
       setLoading(false);
     }
   };
 
-  // useEffect(() => {
-  //   if (refe.current) {
-  //     refe.current.scrollIntoView();
-  //   }
-  // }, [page])
+  // Smooth scroll when movies list changes and it's not the first load
+  useEffect(() => {
+    if (page > 1 && bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [movies]);
 
   return (
     <div className="home" style={{ marginTop: "40px" }}>
@@ -96,23 +101,31 @@ function Home() {
           <i className="fa fa-search"></i>
         </button>
       </form>
+
       {error && <div className="error-message">{error}</div>}
-      {loading ? (
+
+      {loading && page === 1 ? (
         <div className="loading">Loading...</div>
       ) : (
-        <div className="movies-grid">
-          {movies.map((movie) => (
-            <MovieCard movie={movie} key={movie.id} />
-          ))}
-        </div>
+        <>
+          <div className="movies-grid">
+            {movies.map((movie) => (
+              <MovieCard movie={movie} key={movie.id} />
+            ))}
+          </div>
+
+          <button
+            type="button" // prevents form submit jump
+            onClick={loadMoreMovies}
+            className={`load-more-button ${loading ? "no-display" : ""}`}
+            disabled={loading}
+          >
+            {loading ? "Loading..." : "Load More"}
+          </button>
+
+          <div ref={bottomRef}></div>
+        </>
       )}
-      <button
-        onClick={loadMoreMovies}
-        className={`load-more-button ${loading ? "no-display" : ""}`}
-      >
-        {loading ? "Loading..." : "Load More"}
-      </button>
-      {/* <div ref={refe}></div> */}
     </div>
   );
 }
